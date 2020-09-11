@@ -14,60 +14,145 @@ const GameBoard = () => {
         for (let i = 0; i < height; i++) {
             const row = [];
             for (let j = 0; j < width; j++) {
-                row.push(false);
+                row.push('0');
             }
             array.push(row);
         }
         return array;
     }
 
-    const randomizeCells = () => {
+    function changeCellArray(row, cell) {
+        const array = [...cellArray];
+        const current = cellArray[row][cell];
+        if (cellArray[row][cell] === '1') {
+            cellArray[row][cell] = '0';
+        } else {
+            cellArray[row][cell] = '1';
+        }
+        setCellArray(array);
+    }
+
+    function cellularAutomata() {
+        //console.log('start', cellArray);
+        const array = cellArray.map((row, rowIndex) => {
+            return row.map((cell, cellIndex) => {
+                const aliveNeighbours = findNeighbours(rowIndex, cellIndex).filter((n) => {
+                    const row = n[0];
+                    const cell = n[1];
+                    return cellArray[row][cell] === '1' && n;
+                });
+                if (cell === '1') {
+                    if (aliveNeighbours.length < 2 || aliveNeighbours.length > 3) {
+                        return '0';
+                    } else if (aliveNeighbours.length === 2 || aliveNeighbours.length === 3) {
+                        return '1';
+                    }
+                } else {
+                    if (aliveNeighbours.length === 3) {
+                        return '1';
+                    } else {
+                        return '0';
+                    }
+                }
+            });
+        });
+        //console.log('finish', array);
+        return array;
+    }
+
+    function findNeighbours(row, cell) {
+        const neighbours = [];
+        if (row - 1 >= 0) {
+            neighbours.push([row - 1, cell]);
+            if (cell - 1 >= 0) {
+                neighbours.push([row - 1, cell - 1]);
+            }
+            if (cell + 1 <= width - 1) {
+                neighbours.push([row - 1, cell + 1]);
+            }
+        }
+        if (row + 1 <= height - 1) {
+            neighbours.push([row + 1, cell]);
+            if (cell - 1 >= 0) {
+                neighbours.push([row + 1, cell - 1]);
+            }
+            if (cell + 1 <= width - 1) {
+                neighbours.push([row + 1, cell + 1]);
+            }
+        }
+        if (cell + 1 <= width - 1) {
+            neighbours.push([row, cell + 1]);
+        }
+        if (cell - 1 >= 0) {
+            neighbours.push([row, cell - 1]);
+        }
+        return neighbours;
+    }
+
+    function randomizeCells() {
         const array = cellArray.map((row) => {
             return row.map((cell) => {
                 const trigger = Math.floor(Math.random() * 2);
-                if (trigger > 0) {
-                    return true;
+                if (trigger === 1) {
+                    return '1';
                 } else {
-                    return false;
+                    return '0';
                 }
             });
         });
         return array;
-        //setCellArray(array);
-    };
+    }
 
-    const toggleGame = () => {
+    function toggleGame() {
         setIsRunning(!isRunning);
-    };
+    }
 
     useEffect(() => {
         if (isRunning) {
             const timer = setTimeout(() => {
-                setCellArray(randomizeCells());
-            }, 500);
+                setCellArray(cellularAutomata());
+            }, 200);
             return () => clearTimeout(timer);
         }
     });
 
     return (
-        <div id="game-board">
-            <button className="bg-indigo-200 text-2xl p-4" onClick={toggleGame}>
-                {isRunning ? 'Stop' : 'Start'}
-            </button>
-            {!isRunning && (
-                <button className="bg-pink-200 text-2xl p-4" onClick={() => setCellArray(createCellArray())}>
-                    Reset
+        <div className="flex flex-col" id="game-board">
+            <div className="flex flex-row" id="controls">
+                <button className="flex-grow bg-green-200 text-2xl p-4" onClick={toggleGame}>
+                    {isRunning ? 'Stop' : 'Start'}
                 </button>
-            )}
-            {cellArray.map((row, index) => {
-                return (
-                    <div className="flex flex-row" key={index}>
-                        {row.map((cell, index) => {
-                            return <Cell alive={cell} height={cellHeight} width={cellWidth} key={index} />;
-                        })}
-                    </div>
-                );
-            })}
+                {!isRunning && (
+                    <button className="bg-indigo-200 text-2xl p-4" onClick={() => setCellArray(randomizeCells)}>
+                        Randomize
+                    </button>
+                )}
+                {!isRunning && (
+                    <button className="bg-pink-200 text-2xl p-4" onClick={() => setCellArray(createCellArray())}>
+                        Reset
+                    </button>
+                )}
+            </div>
+            <div className="flex flex-col" id="cells">
+                {cellArray.map((row, rowIndex) => {
+                    return (
+                        <div className="row flex flex-row" key={rowIndex}>
+                            {row.map((cell, cellIndex) => {
+                                return (
+                                    <Cell
+                                        alive={cell}
+                                        height={cellHeight}
+                                        width={cellWidth}
+                                        key={cellIndex}
+                                        pos={[rowIndex, cellIndex]}
+                                        onCellClick={changeCellArray}
+                                    />
+                                );
+                            })}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };
