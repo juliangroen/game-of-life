@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 
 const GameBoard = () => {
-    const [height, setHeight] = useState(32);
-    const [width, setWidth] = useState(32);
-    const [cellHeight, setCellHeight] = useState(16);
-    const [cellWidth, setCellWidth] = useState(16);
+    //const [height, setHeight] = useState(32);
+    //const [width, setWidth] = useState(32);
+    //const [cellHeight, setCellHeight] = useState(16);
+    //const [cellWidth, setCellWidth] = useState(16);
+    const height = 32;
+    const width = 32;
+    const cellHeight = 16;
+    const cellWidth = 16;
     const [cellArray, setCellArray] = useState(createCellArray());
     const [isRunning, setIsRunning] = useState(false);
 

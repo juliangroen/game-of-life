@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react';
 
 const Cell = ({ alive, height, width, pos, onCellClick }) => {
     const [isAlive, setIsAlive] = useState(alive);
-    const randomColor = () => {
-        const colors = ['blue', 'teal', 'indigo', 'pink', 'green'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    };
+    //const randomColor = () => {
+    //    const colors = ['blue', 'teal', 'indigo', 'pink', 'green'];
+    //    return colors[Math.floor(Math.random() * colors.length)];
+    //};
 
     function handleClick() {
         const [row, cell] = pos;

@@ -4,7 +4,6 @@ import GameBoard from './components/GameBoard';
 function App() {
     useEffect(() => {
         document.body.classList.add('flex', 'flex-col', 'bg-gray-800');
-        //document.querySelector('#root').classList.add('container');
     });
 
     return (
