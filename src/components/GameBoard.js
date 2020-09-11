@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Cell from './Cell';
 
 const GameBoard = () => {
-    const [height, setHeight] = useState(16);
-    const [width, setWidth] = useState(16);
-    const [cellHeight, setCellHeight] = useState(32);
-    const [cellWidth, setCellWidth] = useState(32);
+    const [height, setHeight] = useState(32);
+    const [width, setWidth] = useState(32);
+    const [cellHeight, setCellHeight] = useState(16);
+    const [cellWidth, setCellWidth] = useState(16);
     const [cellArray, setCellArray] = useState(createCellArray());
     const [isRunning, setIsRunning] = useState(false);
 
@@ -25,7 +25,7 @@ const GameBoard = () => {
         const array = cellArray.map((row) => {
             return row.map((cell) => {
                 const trigger = Math.floor(Math.random() * 2);
-                if (trigger === 1) {
+                if (trigger > 0) {
                     return true;
                 } else {
                     return false;
@@ -41,7 +41,6 @@ const GameBoard = () => {
     };
 
     useEffect(() => {
-        console.log(isRunning);
         if (isRunning) {
             const timer = setTimeout(() => {
                 setCellArray(randomizeCells());

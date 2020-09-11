@@ -14,11 +14,16 @@ const Cell = ({ alive, height, width }) => {
 
     return (
         <div
-            className={`${isAlive === true ? `bg-${randomColor()}-400` : 'bg-white'} ${
+            className={`${isAlive === true ? `bg-${randomColor()}-400` : 'bg-black'} ${
                 isAlive === false ? 'hover:bg-indigo-200' : 'test'
             }`}
             style={{ height: height, width: width }}
             onClick={() => setIsAlive(!isAlive)}
+            onMouseOver={(e) => {
+                if (e.buttons === 1) {
+                    setIsAlive(!isAlive);
+                }
+            }}
         ></div>
     );
 };
