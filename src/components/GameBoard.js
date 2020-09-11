@@ -23,7 +23,6 @@ const GameBoard = () => {
 
     function changeCellArray(row, cell) {
         const array = [...cellArray];
-        const current = cellArray[row][cell];
         if (cellArray[row][cell] === '1') {
             cellArray[row][cell] = '0';
         } else {
