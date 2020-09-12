@@ -22,8 +22,8 @@ const GameBoardCanvas = () => {
         const ctx = canvas.getContext('2d');
         canvas.height = dimensions.height;
         canvas.width = dimensions.width;
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        //ctx.fillStyle = 'black';
+        //ctx.fillRect(0, 0, canvas.width, canvas.height);
         //setCellArray(createGrid(canvas.height, canvas.width));
         cellArray.forEach((row, rowIndex) => {
             row.forEach((cell, cellIndex) => {
@@ -41,31 +41,13 @@ const GameBoardCanvas = () => {
 
     // create a grid that fits the viewport
     function createGrid(height, width, size) {
-        //function findSize(num = 16, endflag = false) {
-        //    console.log('start', num, endflag);
-        //    if (num === 32 && endflag === true) {
-        //        throw Error;
-        //    }
-        //    if (num === 32) {
-        //        findSize(8, true);
-        //    } else if (height % num <= 4 && width % num <= 4) {
-        //        //} else if (height / num && width % num <= 4) {
-        //        console.log('success', num);
-        //        return num;
-        //    } else if (endflag === false) {
-        //        findSize(num + 1);
-        //    } else {
-        //        findSize(num + 1, true);
-        //    }
-        //}
-        //findSize();
         const cols = Math.floor(width / size);
         const rows = Math.floor(height / size);
         const array = [];
         for (let i = 0; i < rows; i++) {
             const row = [];
             for (let j = 0; j < cols; j++) {
-                if (j % 2 === 0) {
+                if (Math.floor(Math.random() * 2) === 0) {
                     row.push('0');
                 } else {
                     row.push('1');
@@ -73,21 +55,65 @@ const GameBoardCanvas = () => {
             }
             array.push(row);
         }
-        console.log(array);
         return array;
     }
 
-    //function createCellArray() {
-    //    const array = [];
-    //    for (let i = 0; i < height; i++) {
-    //        const row = [];
-    //        for (let j = 0; j < width; j++) {
-    //            row.push('0');
-    //        }
-    //        array.push(row);
-    //    }
-    //    return array;
-    //}
+    function cellularAutomata() {
+        //console.log('start', cellArray);
+        const array = cellArray.map((row, rowIndex) => {
+            return row.map((cell, cellIndex) => {
+                const aliveNeighbors = findNeighbors(rowIndex, cellIndex, cellArray).filter((n) => {
+                    const row = n[0];
+                    const cell = n[1];
+                    return cellArray[row][cell] === '1' && n;
+                });
+                if (cell === '1') {
+                    if (aliveNeighbors.length < 2 || aliveNeighbors.length > 3) {
+                        return '0';
+                    } else if (aliveNeighbors.length === 2 || aliveNeighbors.length === 3) {
+                        return '1';
+                    }
+                } else {
+                    if (aliveNeighbors.length === 3) {
+                        return '1';
+                    } else {
+                        return '0';
+                    }
+                }
+            });
+        });
+        //console.log('finish', array);
+        return array;
+    }
+
+    function findNeighbors(row, cell, array) {
+        const neighbors = [];
+        if (row - 1 >= 0) {
+            neighbors.push([row - 1, cell]);
+            if (cell - 1 >= 0) {
+                neighbors.push([row - 1, cell - 1]);
+            }
+            if (cell + 1 <= array[0].length) {
+                neighbors.push([row - 1, cell + 1]);
+            }
+        }
+        if (row + 1 <= array.length) {
+            neighbors.push([row + 1, cell]);
+            if (cell - 1 >= 0) {
+                neighbors.push([row + 1, cell - 1]);
+            }
+            if (cell + 1 <= array[0].length) {
+                neighbors.push([row + 1, cell + 1]);
+            }
+        }
+        if (cell + 1 <= array.length) {
+            neighbors.push([row, cell + 1]);
+        }
+        if (cell - 1 >= 0) {
+            neighbors.push([row, cell - 1]);
+        }
+        return neighbors;
+    }
 
     useEffect(() => {
         window.addEventListener('resize', handleResize);
@@ -98,7 +124,18 @@ const GameBoardCanvas = () => {
         };
     });
 
-    return <canvas ref={canvasEl}></canvas>;
+    return (
+        <div className="relative">
+            <button
+                className="absolute text-2xl text-indigo-400 bg-gray-800 p-4"
+                //onClick={() => setCellArray(createGrid(dimensions.height, dimensions.width, cellSize))}
+                onClick={() => setCellArray(cellularAutomata())}
+            >
+                Test
+            </button>
+            <canvas ref={canvasEl}></canvas>
+        </div>
+    );
 };
 
 export default GameBoardCanvas;
