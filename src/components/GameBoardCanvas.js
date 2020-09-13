@@ -17,9 +17,14 @@ const GameBoardCanvas = () => {
             height: window.innerHeight,
             width: window.innerWidth,
         });
-        console.log(grid.length);
-        setGrid(createGrid(false, dimensions.height, dimensions.width, cellSize));
-        setGrid(mergeGridShot(gridShot, grid));
+        setDimensions((dimState) => {
+            setGrid(createGrid(false, dimState.height, dimState.width, cellSize));
+            setGrid((gridState) => {
+                setGrid(mergeGridShot(gridShot, gridState));
+                return gridState;
+            });
+            return dimState;
+        });
     }
 
     function createGrid(randomize, height, width, cSize) {
@@ -129,6 +134,7 @@ const GameBoardCanvas = () => {
             isRunning && setGrid(cellularAutomata(grid));
             isRunning && setGridShot(grid);
         }, 200);
+
         drawGrid(grid, canvasEl, cellSize);
 
         return () => {
