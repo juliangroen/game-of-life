@@ -52,7 +52,7 @@ const GameBoardCanvas = () => {
         const array = [...grid];
         shot.forEach((row, rowIndex) => {
             row.forEach((cell, cellIndex) => {
-                if (array[rowIndex][cellIndex]) {
+                if (array[rowIndex]) {
                     array[rowIndex][cellIndex] = cell;
                 }
             });
@@ -132,7 +132,7 @@ const GameBoardCanvas = () => {
         window.addEventListener('resize', handleResize);
         const timer = setTimeout(() => {
             isRunning && setGrid(cellularAutomata(grid));
-            isRunning && setGridShot(grid);
+            setGridShot(grid);
         }, 200);
 
         drawGrid(grid, canvasEl, cellSize);
