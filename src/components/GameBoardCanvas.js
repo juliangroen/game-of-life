@@ -163,7 +163,14 @@ const GameBoardCanvas = () => {
                         Randomize
                     </button>
                 )}
-                {!isRunning && <button className="bg-black border-2 border-indigo-600 rounded text-xl text-indigo-600 font-bold p-4">Clear</button>}
+                {!isRunning && (
+                    <button
+                        className="bg-black border-2 border-indigo-600 rounded text-xl text-indigo-600 font-bold p-4"
+                        onClick={() => setGrid(createGrid(false, dimensions.height, dimensions.width, cellSize))}
+                    >
+                        Clear
+                    </button>
+                )}
             </div>
             <canvas ref={canvasEl} width={dimensions.width} height={dimensions.height}></canvas>
         </div>
