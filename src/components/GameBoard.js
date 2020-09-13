@@ -111,12 +111,10 @@ const GameBoard = () => {
     }
 
     useEffect(() => {
-        if (isRunning) {
-            const timer = setTimeout(() => {
-                setCellArray(cellularAutomata());
-            }, 200);
-            return () => clearTimeout(timer);
-        }
+        const timer = setTimeout(() => {
+            isRunning && setCellArray(cellularAutomata());
+        }, 200);
+        return () => clearTimeout(timer);
     });
 
     return (

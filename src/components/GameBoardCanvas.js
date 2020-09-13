@@ -8,17 +8,21 @@ const GameBoardCanvas = () => {
         height: window.innerHeight,
         width: window.innerWidth,
     });
-    const [grid, setGrid] = useState(createGrid());
+    const [grid, setGrid] = useState(createGrid(false, dimensions.height, dimensions.width, cellSize));
+    const [gridShot, setGridShot] = useState([]);
+    const [isRunning, setIsRunning] = useState(false);
 
     function handleResize() {
         setDimensions({
             height: window.innerHeight,
             width: window.innerWidth,
         });
-        setGrid(createGrid());
+        console.log(grid.length);
+        setGrid(createGrid(false, dimensions.height, dimensions.width, cellSize));
+        setGrid(mergeGridShot(gridShot, grid));
     }
 
-    function createGrid(randomize = false, height = dimensions.height, width = dimensions.width, cSize = cellSize) {
+    function createGrid(randomize, height, width, cSize) {
         const array = [];
         while ((array.length + 1) * cSize <= height) {
             const row = [];
@@ -39,6 +43,18 @@ const GameBoardCanvas = () => {
         return array;
     }
 
+    function mergeGridShot(shot, grid) {
+        const array = [...grid];
+        shot.forEach((row, rowIndex) => {
+            row.forEach((cell, cellIndex) => {
+                if (array[rowIndex][cellIndex]) {
+                    array[rowIndex][cellIndex] = cell;
+                }
+            });
+        });
+        return array;
+    }
+
     function drawGrid(array, canvas, cellSize) {
         const ctx = canvas.current.getContext('2d');
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -56,34 +72,25 @@ const GameBoardCanvas = () => {
     }
 
     function cellularAutomata(cellArray) {
-        //console.log('start', cellArray);
         const array = cellArray.map((row, rowIndex) => {
             return row.map((cell, cellIndex) => {
-                //const aliveNeighbors = findNeighbors(rowIndex, cellIndex, cellArray).filter((n) => {
-                //    const row = n[0];
-                //    const cell = n[1];
-                //    return cellArray[row][cell] === '1' && n;
-                //});
-                //console.log(cellArray[rowIndex][cellIndex]);
-                const aliveNeighbors = findNeighbors(rowIndex, cellIndex, cellArray);
-                const test = aliveNeighbors.map((n) => {
+                const aliveNeighbors = findNeighbors(rowIndex, cellIndex, cellArray).filter((n) => {
                     const row = n[0];
                     const cell = n[1];
-                    console.log(cellArray[row][cell]);
+                    return cellArray[row][cell] === '1' && n;
                 });
-                //if (cell === '1') {
-                //    if (aliveNeighbors.length < 2 || aliveNeighbors.length > 3) {
-                //        return '0';
-                //    } else if (aliveNeighbors.length === 2 || aliveNeighbors.length === 3) {
-                //        return '1';
-                //    }
-                //} else if (aliveNeighbors.length === 3) {
-                //    return '1';
-                //}
+                if (cell === '1') {
+                    if (aliveNeighbors.length < 2 || aliveNeighbors.length > 3) {
+                        return '0';
+                    } else if (aliveNeighbors.length === 2 || aliveNeighbors.length === 3) {
+                        return '1';
+                    }
+                } else if (aliveNeighbors.length === 3) {
+                    return '1';
+                }
                 return '0';
             });
         });
-        //console.log('finish', array);
         return array;
     }
 
@@ -94,20 +101,20 @@ const GameBoardCanvas = () => {
             if (cell - 1 >= 0) {
                 neighbors.push([row - 1, cell - 1]);
             }
-            if (cell + 1 <= array[0].length) {
+            if (cell + 1 <= array[row].length - 1) {
                 neighbors.push([row - 1, cell + 1]);
             }
         }
-        if (row + 1 <= array.length) {
+        if (row + 1 <= array.length - 1) {
             neighbors.push([row + 1, cell]);
             if (cell - 1 >= 0) {
                 neighbors.push([row + 1, cell - 1]);
             }
-            if (cell + 1 <= array[0].length) {
+            if (cell + 1 <= array[row].length - 1) {
                 neighbors.push([row + 1, cell + 1]);
             }
         }
-        if (cell + 1 <= array.length) {
+        if (cell + 1 <= array[row].length - 1) {
             neighbors.push([row, cell + 1]);
         }
         if (cell - 1 >= 0) {
@@ -118,19 +125,27 @@ const GameBoardCanvas = () => {
 
     useEffect(() => {
         window.addEventListener('resize', handleResize);
+        const timer = setTimeout(() => {
+            isRunning && setGrid(cellularAutomata(grid));
+            isRunning && setGridShot(grid);
+        }, 200);
         drawGrid(grid, canvasEl, cellSize);
 
         return () => {
             window.removeEventListener('resize', handleResize);
+            clearTimeout(timer);
         };
     });
 
     return (
         <div className="bg-black relative">
-            <button className="absolute top-0 left-0 text-indigo-400 bg-gray-800 p-4" onClick={() => setGrid(createGrid(true))}>
-                Grid: {grid.length} x {grid[0].length}
+            <button
+                className="absolute top-0 left-0 text-indigo-400 bg-gray-800 p-4"
+                onClick={() => setGrid(createGrid(true, dimensions.height, dimensions.width, cellSize))}
+            >
+                Width: {dimensions.width} | Grid: {grid.length} x {grid[0].length}
             </button>
-            <button className="absolute top-0 right-0 text-indigo-400 bg-gray-800 p-4" onClick={() => setGrid(cellularAutomata(grid))}>
+            <button className="absolute top-0 right-0 text-indigo-400 bg-gray-800 p-4" onClick={() => setIsRunning(true)}>
                 Automata
             </button>
             <canvas ref={canvasEl} width={dimensions.width} height={dimensions.height}></canvas>
