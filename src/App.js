@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import GameBoardCanvas from './components/GameBoardCanvas';
-import GameControls from './components/GameControls';
 
 function App() {
     useEffect(() => {
@@ -10,7 +9,6 @@ function App() {
     return (
         <div className="relative">
             <GameBoardCanvas />
-            <GameControls />
         </div>
     );
 }

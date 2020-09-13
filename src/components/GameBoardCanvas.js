@@ -27,6 +27,8 @@ const GameBoardCanvas = () => {
         });
     }
 
+    function handleRandomize() {}
+
     function createGrid(randomize, height, width, cSize) {
         const array = [];
         while ((array.length + 1) * cSize <= height) {
@@ -134,7 +136,6 @@ const GameBoardCanvas = () => {
             isRunning && setGrid(cellularAutomata(grid));
             setGridShot(grid);
         }, 200);
-
         drawGrid(grid, canvasEl, cellSize);
 
         return () => {
@@ -145,15 +146,25 @@ const GameBoardCanvas = () => {
 
     return (
         <div className="bg-black relative">
-            <button
-                className="absolute top-0 left-0 text-indigo-400 bg-gray-800 p-4"
-                onClick={() => setGrid(createGrid(true, dimensions.height, dimensions.width, cellSize))}
-            >
-                Width: {dimensions.width} | Grid: {grid.length} x {grid[0].length}
-            </button>
-            <button className="absolute top-0 right-0 text-indigo-400 bg-gray-800 p-4" onClick={() => setIsRunning(true)}>
-                Automata
-            </button>
+            <div className="absolute bottom-0 left-0 right-0 flex flex-row mx-auto w-full md:w-4/6 lg:w-3/6 xl:w-2/5 p-4">
+                <button
+                    className={`flex-grow bg-black border-2 ${
+                        isRunning ? 'border-pink-400 text-pink-400' : 'border-indigo-400 text-indigo-400'
+                    } rounded text-xl font-bold p-4 mr-4`}
+                    onClick={() => setIsRunning(!isRunning)}
+                >
+                    {isRunning ? 'Stop' : 'Start'}
+                </button>
+                {!isRunning && (
+                    <button
+                        className="bg-black border-2 border-gray-600 rounded text-xl text-gray-600 font-bold p-4 mr-4"
+                        onClick={() => setGrid(createGrid(true, dimensions.height, dimensions.width, cellSize))}
+                    >
+                        Randomize
+                    </button>
+                )}
+                {!isRunning && <button className="bg-black border-2 border-indigo-600 rounded text-xl text-indigo-600 font-bold p-4">Clear</button>}
+            </div>
             <canvas ref={canvasEl} width={dimensions.width} height={dimensions.height}></canvas>
         </div>
     );
