@@ -11,6 +11,7 @@ const GameBoardCanvas = () => {
     const [grid, setGrid] = useState(createGrid(false, dimensions.height, dimensions.width, cellSize));
     const [gridShot, setGridShot] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
+    const [isDrawing, setIsDrawing] = useState(false);
 
     function handleResize() {
         setDimensions({
@@ -27,16 +28,14 @@ const GameBoardCanvas = () => {
         });
     }
 
-    function handleRandomize() {}
-
     function createGrid(randomize, height, width, cSize) {
         const array = [];
         while ((array.length + 1) * cSize <= height) {
             const row = [];
             while ((row.length + 1) * cSize <= width) {
                 if (randomize) {
-                    const rand = Math.floor(Math.random() * 2);
-                    if (rand === 0) {
+                    const rand = Math.floor(Math.random() * 4);
+                    if (rand < 3) {
                         row.push('0');
                     } else {
                         row.push('1');
@@ -76,6 +75,50 @@ const GameBoardCanvas = () => {
                 }
             });
         });
+    }
+
+    function toggleTargetCell(x, y, bool) {
+        grid.forEach((row, rowIndex) => {
+            row.forEach((cell, cellIndex) => {
+                const cellX = cellIndex * cellSize;
+                const cellY = rowIndex * cellSize;
+                if (x >= cellX && x <= cellX + cellSize && y >= cellY && y <= cellY + cellSize) {
+                    setGrid(changeGridCell(rowIndex, cellIndex, bool));
+                }
+            });
+        });
+    }
+
+    function handleMouseEvent(event) {
+        const touch = event.touches ? event.touches[0] : false;
+        const clientX = touch ? touch.clientX : event.clientX;
+        const clientY = touch ? touch.clientY : event.clientY;
+        if (event.type === 'click') {
+            toggleTargetCell(clientX, clientY, true);
+        } else if (event.type === 'mousemove' || event.type === 'touchmove') {
+            if (isDrawing) {
+                toggleTargetCell(clientX, clientY, true);
+            }
+        } else if (event.type === 'mousedown' || event.type === 'touchstart') {
+            setIsDrawing(true);
+        } else if (event.type === 'mouseup' || event.type === 'touchend') {
+            setIsDrawing(false);
+        }
+    }
+
+    function handleTouchEvent(event) {
+        handleMouseEvent(event);
+    }
+
+    function changeGridCell(rowIndex, cellIndex, bool) {
+        const array = [...grid];
+        const current = array[rowIndex][cellIndex];
+        if (bool) {
+            array[rowIndex][cellIndex] = '1';
+        } else {
+            array[rowIndex][cellIndex] = '0';
+        }
+        return array;
     }
 
     function cellularAutomata(cellArray) {
@@ -172,7 +215,18 @@ const GameBoardCanvas = () => {
                     </button>
                 )}
             </div>
-            <canvas ref={canvasEl} width={dimensions.width} height={dimensions.height}></canvas>
+            <canvas
+                ref={canvasEl}
+                width={dimensions.width}
+                height={dimensions.height}
+                onMouseDown={handleMouseEvent}
+                onMouseUp={handleMouseEvent}
+                onMouseMove={handleMouseEvent}
+                onTouchStart={handleTouchEvent}
+                onTouchEnd={handleTouchEvent}
+                onTouchMove={handleTouchEvent}
+                onClick={handleMouseEvent}
+            ></canvas>
         </div>
     );
 };
