@@ -56,7 +56,9 @@ const GameBoardCanvas = () => {
         shot.forEach((row, rowIndex) => {
             row.forEach((cell, cellIndex) => {
                 if (array[rowIndex]) {
-                    array[rowIndex][cellIndex] = cell;
+                    if (array[rowIndex][cellIndex]) {
+                        array[rowIndex][cellIndex] = cell;
+                    }
                 }
             });
         });
@@ -80,15 +82,20 @@ const GameBoardCanvas = () => {
     }
 
     function toggleTargetCell(x, y, bool) {
-        grid.forEach((row, rowIndex) => {
-            row.forEach((cell, cellIndex) => {
-                const cellX = cellIndex * cellSize;
-                const cellY = rowIndex * cellSize;
-                if (x >= cellX && x <= cellX + cellSize && y >= cellY && y <= cellY + cellSize) {
-                    setGrid(changeGridCell(rowIndex, cellIndex, bool));
-                }
-            });
-        });
+        if (x >= 0 && x <= dimensions.width && y >= 0 && y <= dimensions.height) {
+            const row = Math.floor(y / cellSize);
+            const col = Math.floor(x / cellSize);
+            setGrid(changeGridCell(row, col, bool));
+        }
+        //grid.forEach((row, rowIndex) => {
+        //    row.forEach((cell, cellIndex) => {
+        //        const cellX = cellIndex * cellSize;
+        //        const cellY = rowIndex * cellSize;
+        //        if (x >= cellX && x <= cellX + cellSize && y >= cellY && y <= cellY + cellSize) {
+        //            setGrid(changeGridCell(rowIndex, cellIndex, bool));
+        //        }
+        //    });
+        //});
     }
 
     function handleMouseEvent(event) {
@@ -108,13 +115,8 @@ const GameBoardCanvas = () => {
         }
     }
 
-    function handleTouchEvent(event) {
-        handleMouseEvent(event);
-    }
-
     function changeGridCell(rowIndex, cellIndex, bool) {
         const array = [...grid];
-        const current = array[rowIndex][cellIndex];
         if (bool) {
             array[rowIndex][cellIndex] = '1';
         } else {
@@ -224,9 +226,9 @@ const GameBoardCanvas = () => {
                 onMouseDown={handleMouseEvent}
                 onMouseUp={handleMouseEvent}
                 onMouseMove={handleMouseEvent}
-                onTouchStart={handleTouchEvent}
-                onTouchEnd={handleTouchEvent}
-                onTouchMove={handleTouchEvent}
+                onTouchStart={handleMouseEvent}
+                onTouchEnd={handleMouseEvent}
+                onTouchMove={handleMouseEvent}
                 onClick={handleMouseEvent}
             ></canvas>
         </div>
