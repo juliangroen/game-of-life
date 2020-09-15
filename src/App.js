@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import GameBoardCanvas from './components/GameBoardCanvas';
+import IntroModal from './components/IntroModal';
 
 function App() {
-    //useEffect(() => {
-    //    document.body.classList.add('overflow-hidden');
-    //});
-
-    return <GameBoardCanvas />;
+    document.body.classList.add('overflow-hidden');
+    return (
+        <div className="relative">
+            <IntroModal />
+            <GameBoardCanvas />
+        </div>
+    );
 }
 
 export default App;
