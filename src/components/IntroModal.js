@@ -7,7 +7,7 @@ const IntroModal = () => {
             {isOpen && (
                 <div className="absolute inset-x-0 z-50 bg-gray-800 rounded-lg shadow-lg sm:w-2/3 lg:w-1/2 xl:w-1/3 px-4 pt-12 pb-6 m-8 sm:mx-auto">
                     <div
-                        className="absolute top-0 right-0 cursor-pointer bg-gray-900 opacity-75 rounded-full text-2xl text-gray-400 hover:text-indigo-400 font-mono px-3 m-4"
+                        className="absolute top-0 right-0 cursor-pointer bg-gray-900 opacity-75 rounded-full text-2xl text-gray-400 hover:text-indigo-400 font-mono leading-tight px-2 m-3"
                         onClick={() => {
                             setIsOpen(!isOpen);
                         }}
@@ -15,11 +15,11 @@ const IntroModal = () => {
                         ×
                     </div>
                     <h1 className="text-3xl text-indigo-400 text-center mb-4">Conway's Game of Life</h1>
-                    <p className="bg-gray-700 text-gray-400 rounded p-2 mb-4">
+                    <p className="bg-gray-700 text-gray-400 rounded p-4 mb-4">
                         Draw a pattern of cells on the screen, or generate a random pattern by clicking the "Randomize"
                         button.
                     </p>
-                    <p className="bg-gray-700 text-gray-400 rounded p-2 mb-4">
+                    <p className="bg-gray-700 text-gray-400 rounded p-4 mb-4">
                         Start the game and watch the cells die and repopulate based on the following rules:
                         <ul className="text-gray-500 text-sm list-disc mt-2 ml-4">
                             <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
