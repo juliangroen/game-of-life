@@ -106,6 +106,21 @@ const GameBoardCanvas = () => {
         }
     }
 
+    function handleTouchStart() {
+        setIsDrawing(true);
+    }
+
+    function handleTouchMove(event) {
+        const touch = event.touches[0];
+        if (isDrawing) {
+            toggleTargetCell(touch.clientX, touch.clientY, true);
+        }
+    }
+
+    function handleTouchEnd() {
+        setIsDrawing(false);
+    }
+
     function changeGridCell(rowIndex, cellIndex, bool) {
         const array = [...grid];
         if (bool) {
@@ -117,6 +132,7 @@ const GameBoardCanvas = () => {
     }
 
     function cellularAutomata(cellArray) {
+        setGridShot(grid);
         const array = cellArray.map((row, rowIndex) => {
             return row.map((cell, cellIndex) => {
                 const aliveNeighbors = findNeighbors(rowIndex, cellIndex, cellArray).filter((n) => {
@@ -172,7 +188,6 @@ const GameBoardCanvas = () => {
         window.addEventListener('resize', handleResize);
         const timer = setTimeout(() => {
             isRunning && setGrid(cellularAutomata(grid));
-            setGridShot(grid);
         }, 200);
         drawGrid(grid, canvasEl, cellSize);
 
@@ -217,9 +232,9 @@ const GameBoardCanvas = () => {
                 onMouseDown={handleMouseEvent}
                 onMouseUp={handleMouseEvent}
                 onMouseMove={handleMouseEvent}
-                //onTouchStart={handleMouseEvent}
-                //onTouchEnd={handleMouseEvent}
-                //onTouchMove={handleMouseEvent}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onTouchMove={handleTouchMove}
                 onClick={handleMouseEvent}
             ></canvas>
         </div>
