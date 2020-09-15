@@ -13,12 +13,14 @@ const GameBoardCanvas = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [isDrawing, setIsDrawing] = useState(false);
 
-    function handleResize() {
+    function handleResize(event) {
+        //console.log(event.type);
         setDimensions({
             height: window.innerHeight,
             width: window.innerWidth,
         });
         setDimensions((dimState) => {
+            console.log(dimState);
             setGrid(createGrid(false, dimState.height, dimState.width, cellSize));
             setGrid((gridState) => {
                 setGrid(mergeGridShot(gridShot, gridState));
