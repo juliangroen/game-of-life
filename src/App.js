@@ -3,7 +3,7 @@ import GameBoardCanvas from './components/GameBoardCanvas';
 
 function App() {
     useEffect(() => {
-        document.body.classList.add('bg-gray-800');
+        document.body.classList.add('bg-gray-800', 'overflow-hidden');
     });
 
     return (
