@@ -19,7 +19,7 @@ const IntroModal = () => {
                         Draw a pattern of cells on the screen, or generate a random pattern by clicking the "Randomize"
                         button.
                     </p>
-                    <p className="bg-gray-700 text-gray-400 rounded p-4 mb-4">
+                    <div className="bg-gray-700 text-gray-400 rounded p-4 mb-4">
                         Start the game and watch the cells die and repopulate based on the following rules:
                         <ul className="text-gray-500 text-sm list-disc mt-2 ml-4">
                             <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
@@ -30,7 +30,7 @@ const IntroModal = () => {
                                 reproduction.
                             </li>
                         </ul>
-                    </p>
+                    </div>
                     <button
                         className="bg-indigo-600 hover:bg-indigo-500 text-gray-900 rounded text-xl text-center w-full p-2"
                         onClick={() => {

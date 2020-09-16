@@ -12,6 +12,8 @@ const GameBoardCanvas = () => {
     const [gridShot, setGridShot] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
     const [isDrawing, setIsDrawing] = useState(false);
+    //const [touchArray, setTouchArray] = useState([]);
+    const [prevTouch, setPrevTouch] = useState(false);
 
     function handleResize(event) {
         //console.log(event.type);
@@ -110,15 +112,44 @@ const GameBoardCanvas = () => {
         setIsDrawing(true);
     }
 
-    function handleTouchMove(event) {
-        const touch = event.touches[0];
-        if (isDrawing) {
-            toggleTargetCell(touch.clientX, touch.clientY, true);
-        }
-    }
-
     function handleTouchEnd() {
         setIsDrawing(false);
+        setPrevTouch(false);
+    }
+
+    function handleTouchMove(event) {
+        const touch = event.touches[0];
+        const touchX = Math.floor(touch.clientX);
+        const touchY = Math.floor(touch.clientY);
+        if (prevTouch) {
+            const prevX = Math.floor(prevTouch.clientX);
+            const prevY = Math.floor(prevTouch.clientY);
+            if (isDrawing) {
+                const lerpX = Math.floor(lerp(prevX, touchX, 0.1));
+                const lerpY = Math.floor(lerp(prevY, touchY, 0.1));
+                //console.log('prev', prevX, prevY);
+                toggleTargetCell(lerpX, lerpY, true);
+                //console.log('lerp', lerpX, lerpY);
+                toggleTargetCell(touchX, touchY, true);
+                //console.log('touch', touchX, touchY);
+            }
+        } else {
+            setPrevTouch(touch);
+        }
+        setPrevTouch(touch);
+    }
+
+    // Linear Interpolation method.
+    // a: The starting value
+    // b: The destination value
+    // n: The normal value (between 0 and 1) to control the Linear Interpolation
+    //
+    // If the normal value is equal to 1 the circle will instantly switch from A to B.
+    // If the normal value is equal to 0 the circle will not move.
+    // The closer the normal is to 0 the smoother will be the interpolation.
+    // The closer the normal is to 1 the sharper will be the interpolation.
+    function lerp(a, b, n) {
+        return (1 - n) * a + n * b;
     }
 
     function changeGridCell(rowIndex, cellIndex, bool) {
@@ -132,7 +163,6 @@ const GameBoardCanvas = () => {
     }
 
     function cellularAutomata(cellArray) {
-        setGridShot(grid);
         const array = cellArray.map((row, rowIndex) => {
             return row.map((cell, cellIndex) => {
                 const aliveNeighbors = findNeighbors(rowIndex, cellIndex, cellArray).filter((n) => {
@@ -188,6 +218,7 @@ const GameBoardCanvas = () => {
         window.addEventListener('resize', handleResize);
         const timer = setTimeout(() => {
             isRunning && setGrid(cellularAutomata(grid));
+            isRunning && setGridShot(grid);
         }, 200);
         drawGrid(grid, canvasEl, cellSize);
 
