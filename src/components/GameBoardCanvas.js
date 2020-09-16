@@ -125,13 +125,25 @@ const GameBoardCanvas = () => {
             const prevX = Math.floor(prevTouch.clientX);
             const prevY = Math.floor(prevTouch.clientY);
             if (isDrawing) {
-                const lerpX = Math.floor(lerp(prevX, touchX, 0.1));
-                const lerpY = Math.floor(lerp(prevY, touchY, 0.1));
-                //console.log('prev', prevX, prevY);
-                toggleTargetCell(lerpX, lerpY, true);
-                //console.log('lerp', lerpX, lerpY);
+                function recursiveLerp(array, count) {
+                    if (count < 1) {
+                        const points = [...array];
+                        const midX = Math.floor(lerp(prevX, touchX, count));
+                        const midY = Math.floor(lerp(prevY, touchY, count));
+                        points.push([midX, midY].join(','));
+                        return recursiveLerp(points, count + 0.01);
+                    } else if (count >= 1) {
+                        return array;
+                    }
+                }
+                const points = [...new Set(recursiveLerp([], 0.1))];
+                console.log(points);
+                toggleTargetCell(prevX, prevY, true);
+                points.forEach((point) => {
+                    const arr = point.split(',');
+                    toggleTargetCell(arr[0], arr[1], true);
+                });
                 toggleTargetCell(touchX, touchY, true);
-                //console.log('touch', touchX, touchY);
             }
         } else {
             setPrevTouch(touch);
