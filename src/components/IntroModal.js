@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 const IntroModal = () => {
     const [isOpen, setIsOpen] = useState(true);
+    !isOpen && document.body.classList.add('overflow-hidden');
     return (
         <div className={`absolute inset-0 z-40 ${isOpen ? '' : 'pointer-events-none'}`}>
             {isOpen && (
