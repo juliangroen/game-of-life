@@ -12,7 +12,6 @@ const GameBoardCanvas = () => {
     const [gridShot, setGridShot] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
     const [isDrawing, setIsDrawing] = useState(false);
-    //const [touchArray, setTouchArray] = useState([]);
     const [prevTouch, setPrevTouch] = useState(false);
 
     function handleResize(event) {
@@ -97,7 +96,33 @@ const GameBoardCanvas = () => {
             toggleTargetCell(clientX, clientY, true);
         } else if (event.type === 'mousemove' || event.type === 'touchmove') {
             if (isDrawing) {
-                toggleTargetCell(clientX, clientY, true);
+                const touch = event.type === 'touchmove' ? event.touches[0] : false;
+                const curX = touch ? Math.floor(touch.clientX) : event.clientX;
+                const curY = touch ? Math.floor(touch.clientY) : event.clientY;
+                if (prevTouch) {
+                    const prevX = Math.floor(prevTouch.clientX);
+                    const prevY = Math.floor(prevTouch.clientY);
+                    function recursiveLerp(array, count) {
+                        if (count < 1) {
+                            const points = [...array];
+                            const midX = Math.floor(lerp(prevX, curX, count));
+                            const midY = Math.floor(lerp(prevY, curY, count));
+                            points.push([midX, midY].join(','));
+                            return recursiveLerp(points, count + 0.01);
+                        } else if (count >= 1) {
+                            return array;
+                        }
+                    }
+                    const points = [...new Set(recursiveLerp([], 0.1))];
+                    points.forEach((point) => {
+                        const arr = point.split(',');
+                        toggleTargetCell(arr[0], arr[1], true);
+                    });
+                    toggleTargetCell(curX, curY, true);
+                } else {
+                    setPrevTouch(touch ? touch : { clientX: curX, clientY: curY });
+                }
+                setPrevTouch(touch ? touch : { clientX: curX, clientY: curY });
             }
         } else if (event.type === 'mousedown' || event.type === 'touchstart') {
             setIsDrawing(true);
@@ -106,58 +131,8 @@ const GameBoardCanvas = () => {
         }
     }
 
-    function handleTouchStart() {
-        setIsDrawing(true);
-    }
-
-    function handleTouchEnd() {
-        setIsDrawing(false);
-        setPrevTouch(false);
-    }
-
-    function handleTouchMove(event) {
-        const touch = event.touches[0];
-        const touchX = Math.floor(touch.clientX);
-        const touchY = Math.floor(touch.clientY);
-        if (prevTouch) {
-            const prevX = Math.floor(prevTouch.clientX);
-            const prevY = Math.floor(prevTouch.clientY);
-            if (isDrawing) {
-                function recursiveLerp(array, count) {
-                    if (count < 1) {
-                        const points = [...array];
-                        const midX = Math.floor(lerp(prevX, touchX, count));
-                        const midY = Math.floor(lerp(prevY, touchY, count));
-                        points.push([midX, midY].join(','));
-                        return recursiveLerp(points, count + 0.001);
-                    } else if (count >= 1) {
-                        return array;
-                    }
-                }
-                const points = [...new Set(recursiveLerp([], 0.1))];
-                //console.log(points);
-                toggleTargetCell(prevX, prevY, true);
-                points.forEach((point) => {
-                    const arr = point.split(',');
-                    toggleTargetCell(arr[0], arr[1], true);
-                });
-                toggleTargetCell(touchX, touchY, true);
-            }
-        } else {
-            setPrevTouch(touch);
-        }
-        setPrevTouch(touch);
-    }
-
-    // Linear Interpolation method.
-    // a: The starting value
-    // b: The destination value
-    // n: The normal value (between 0 and 1) to control the Linear Interpolation
-    //
-    // If the normal value is equal to 1 the circle will instantly switch from A to B.
-    // If the normal value is equal to 0 the circle will not move.
-    // The closer the normal is to 0 the smoother will be the interpolation.
-    // The closer the normal is to 1 the sharper will be the interpolation.
+    // Linear Interpolation
+    // a: start, b: end, n: normal value
     function lerp(a, b, n) {
         return (1 - n) * a + n * b;
     }
@@ -277,9 +252,9 @@ const GameBoardCanvas = () => {
                 onMouseDown={handleMouseEvent}
                 onMouseUp={handleMouseEvent}
                 onMouseMove={handleMouseEvent}
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-                onTouchMove={handleTouchMove}
+                onTouchStart={handleMouseEvent}
+                onTouchEnd={handleMouseEvent}
+                onTouchMove={handleMouseEvent}
                 onClick={handleMouseEvent}
             ></canvas>
         </div>
