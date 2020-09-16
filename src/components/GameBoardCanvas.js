@@ -16,13 +16,11 @@ const GameBoardCanvas = () => {
     const [prevTouch, setPrevTouch] = useState(false);
 
     function handleResize(event) {
-        //console.log(event.type);
         setDimensions({
             height: window.innerHeight,
             width: window.innerWidth,
         });
         setDimensions((dimState) => {
-            console.log(dimState);
             setGrid(createGrid(false, dimState.height, dimState.width, cellSize));
             setGrid((gridState) => {
                 setGrid(mergeGridShot(gridShot, gridState));
@@ -131,13 +129,13 @@ const GameBoardCanvas = () => {
                         const midX = Math.floor(lerp(prevX, touchX, count));
                         const midY = Math.floor(lerp(prevY, touchY, count));
                         points.push([midX, midY].join(','));
-                        return recursiveLerp(points, count + 0.01);
+                        return recursiveLerp(points, count + 0.001);
                     } else if (count >= 1) {
                         return array;
                     }
                 }
                 const points = [...new Set(recursiveLerp([], 0.1))];
-                console.log(points);
+                //console.log(points);
                 toggleTargetCell(prevX, prevY, true);
                 points.forEach((point) => {
                     const arr = point.split(',');
@@ -166,10 +164,14 @@ const GameBoardCanvas = () => {
 
     function changeGridCell(rowIndex, cellIndex, bool) {
         const array = [...grid];
-        if (bool) {
-            array[rowIndex][cellIndex] = '1';
-        } else {
-            array[rowIndex][cellIndex] = '0';
+        if (array[rowIndex] !== undefined) {
+            if (array[rowIndex][cellIndex] !== undefined) {
+                if (bool) {
+                    array[rowIndex][cellIndex] = '1';
+                } else {
+                    array[rowIndex][cellIndex] = '0';
+                }
+            }
         }
         return array;
     }
