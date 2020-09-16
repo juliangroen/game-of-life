@@ -5,7 +5,7 @@ const IntroModal = () => {
     return (
         <div className={`absolute inset-0 z-40 ${isOpen ? '' : 'pointer-events-none'}`}>
             {isOpen && (
-                <div className="absolute inset-x-0 z-50 bg-gray-800 rounded-lg shadow-lg sm:w-2/3 lg:w-1/2 xl:w-1/3 px-4 pt-12 pb-6 m-8 sm:mx-auto">
+                <div className="absolute inset-0 md:inset-x-0 md:inset-y-auto overflow-auto z-50 bg-gray-800 rounded-lg shadow-lg sm:w-2/3 lg:w-1/2 xl:w-1/3 px-4 pt-12 pb-6 m-8 sm:mx-auto">
                     <div
                         className="absolute top-0 right-0 cursor-pointer bg-gray-900 opacity-75 rounded-full text-2xl text-gray-400 hover:text-indigo-400 font-mono leading-tight px-2 m-3"
                         onClick={() => {
