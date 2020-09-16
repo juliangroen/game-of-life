@@ -128,6 +128,7 @@ const GameBoardCanvas = () => {
             setIsDrawing(true);
         } else if (event.type === 'mouseup' || event.type === 'touchend') {
             setIsDrawing(false);
+            setPrevTouch(false);
         }
     }
 
