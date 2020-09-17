@@ -220,32 +220,84 @@ const GameBoardCanvas = () => {
 
     return (
         <div className="bg-black relative">
-            <div className="absolute bottom-0 left-0 right-0 flex flex-row mx-auto w-full md:w-4/6 lg:w-3/6 xl:w-2/5 p-4">
-                <button
-                    className={`flex-grow bg-black border-2 ${
-                        isRunning ? 'border-pink-400 text-pink-400' : 'border-indigo-400 text-indigo-400'
-                    } rounded text-xl font-bold p-4 mr-4`}
-                    onClick={() => setIsRunning(!isRunning)}
-                >
-                    {isRunning ? 'Stop' : 'Start'}
-                </button>
-                {!isRunning && (
-                    <button
-                        className="bg-black border-2 border-gray-600 rounded text-xl text-gray-600 font-bold p-4 mr-4"
-                        onClick={() => setGrid(createGrid(true, dimensions.height, dimensions.width, cellSize))}
+            {
+                // portrait mode or a tall landscape
+                (dimensions.height > dimensions.width ||
+                    (dimensions.height < dimensions.width && dimensions.height > 640)) && (
+                    <div
+                        //className={isDrawing && 'absolute inset-y-0 right-0 flex flex-col p-4'}
+                        className={`${
+                            isDrawing && `hidden`
+                        } ${`absolute bottom-0 left-0 right-0 flex flex-row text-sm sm:text-base mx-auto w-full md:w-4/6 lg:w-3/6 xl:w-2/5 p-4`}`}
                     >
-                        Randomize
-                    </button>
-                )}
-                {!isRunning && (
-                    <button
-                        className="bg-black border-2 border-indigo-600 rounded text-xl text-indigo-600 font-bold p-4"
-                        onClick={() => setGrid(createGrid(false, dimensions.height, dimensions.width, cellSize))}
+                        <button
+                            className={`flex-grow bg-black border-2 ${
+                                isRunning ? 'border-pink-400 text-pink-400' : 'border-indigo-400 text-indigo-400'
+                            } rounded font-bold p-4 mr-4`}
+                            onClick={() => setIsRunning(!isRunning)}
+                        >
+                            {isRunning ? 'Stop' : 'Start'}
+                        </button>
+                        {!isRunning && (
+                            <button
+                                className="bg-black border-2 border-gray-600 rounded text-gray-600 font-bold p-4 mr-4"
+                                onClick={() => setGrid(createGrid(true, dimensions.height, dimensions.width, cellSize))}
+                            >
+                                Randomize
+                            </button>
+                        )}
+                        {!isRunning && (
+                            <button
+                                className="bg-black border-2 border-indigo-600 rounded text-indigo-600 font-bold p-4"
+                                onClick={() =>
+                                    setGrid(createGrid(false, dimensions.height, dimensions.width, cellSize))
+                                }
+                            >
+                                Clear
+                            </button>
+                        )}
+                    </div>
+                )
+            }
+            {
+                //landscape mode
+                dimensions.height < dimensions.width && dimensions.height <= 640 && (
+                    <div
+                        className={`${
+                            isDrawing && `hidden`
+                        } absolute inset-y-0 right-0 flex flex-col text-sm sm:text-base w-32 px-4 py-16`}
                     >
-                        Clear
-                    </button>
-                )}
-            </div>
+                        <button
+                            className={`flex-grow bg-black border-2 ${
+                                isRunning
+                                    ? 'border-pink-400 text-pink-400 opacity-25 focus:outline-none hover:opacity-100'
+                                    : 'border-indigo-400 text-indigo-400'
+                            } rounded font-bold p-4 mb-4`}
+                            onClick={() => setIsRunning(!isRunning)}
+                        >
+                            {isRunning ? 'Stop' : 'Start'}
+                        </button>
+                        {!isRunning && (
+                            <button
+                                className="bg-black border-2 border-gray-600 rounded text-gray-600 font-bold p-4 mb-4"
+                                onClick={() => setGrid(createGrid(true, dimensions.height, dimensions.width, cellSize))}
+                            >
+                                Random
+                            </button>
+                        )}
+                        {!isRunning && (
+                            <button
+                                className="bg-black border-2 border-indigo-600 rounded text-indigo-600 font-bold p-4"
+                                onClick={() =>
+                                    setGrid(createGrid(false, dimensions.height, dimensions.width, cellSize))
+                                }
+                            >
+                                Clear
+                            </button>
+                        )}
+                    </div>
+                )
+            }
             <canvas
                 ref={canvasEl}
                 width={dimensions.width}
